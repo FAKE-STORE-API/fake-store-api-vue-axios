@@ -82,7 +82,7 @@ const filteredProducts = computed<Product[]>(() => {
 
 const handleGoToProduct = (id: number) => {
   console.log(`Navigating to product with id ${id}.`);
-  router.push({ name: 'product', params: { id } });
+  router.push({ name: 'product-details', params: { id } });
 };
 
 const handleAddToCart = (id: number) => {

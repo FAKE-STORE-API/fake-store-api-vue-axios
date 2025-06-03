@@ -9,7 +9,7 @@
         description="Your cart is empty"
         style="margin-top: 20px; text-align: center"
       />
-      <el-list v-else>
+      <div v-else>
         <div class="cart-items-container">
           <div v-for="item in cartStore.cartItems" :key="item.id" class="cart-item">
             <div class="cart-item-content">
@@ -50,7 +50,7 @@
             </div>
           </div>
         </div>
-      </el-list>
+      </div>
     </div>
     <template #footer>
       <el-text tag="b" size="large">$ {{ cartStore.totalPrice }}</el-text>
@@ -71,6 +71,8 @@
 import { ref, watch, computed, onMounted, onUnmounted } from 'vue';
 
 import { useCartStore } from '@/stores/cartStore';
+
+import { ArrowRight } from '@element-plus/icons-vue';
 
 import { Plus, Minus, Close } from '@element-plus/icons-vue';
 
