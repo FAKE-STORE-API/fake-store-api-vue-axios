@@ -9,15 +9,24 @@
     <template #content>
       <el-main class="main">
         <div class="dashboard-content">
-          <p>Welcome to the admin dashboard!</p>
-          <!-- Add more dashboard content here -->
+          <el-tabs type="border-card">
+            <el-tab-pane label="My Products">
+              <product-table-list />
+            </el-tab-pane>
+            <el-tab-pane label="My Customers">
+              <customer-table-list />
+            </el-tab-pane>
+          </el-tabs>
         </div>
       </el-main>
     </template>
   </base-layout>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import CustomerTableList from '@/components/CustomerTableList.vue';
+import ProductTableList from '@/components/ProductTableList.vue';
+</script>
 
 <style scoped>
 :deep(.el-container) {
