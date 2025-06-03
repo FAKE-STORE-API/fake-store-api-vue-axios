@@ -132,7 +132,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
-import type { FormInstance, FormRules } from 'element-plus';
+import { type FormInstance, type FormRules, ElMessage } from 'element-plus';
 import type { RuleForm } from '@/models/types';
 import { User, Message, Phone, Unlock, Lock } from '@element-plus/icons-vue';
 import { useRegistrationStore } from '@/stores/useStore';
@@ -224,7 +224,6 @@ const submitForm = (formEl: FormInstance | null) => {
   if (!formEl) return;
   formEl.validate((valid) => {
     if (valid) {
-      // Map ruleForm to userRegistrationStore fields
       const userData = {
         id: ruleForm.id,
         firstName: ruleForm.firstname,
@@ -237,11 +236,17 @@ const submitForm = (formEl: FormInstance | null) => {
       };
       const success = registrationStore.registerUser(userData);
       if (success) {
-        console.log('Registration successful');
-        console.log('Registered Users:', registrationStore.getUsers);
-      } else {
-        console.error('Registration failed');
+        ElMessage({
+          message: 'Registration successful',
+          type: 'success',
+        });
       }
+    } else {
+      ElMessage({
+        message: 'Registration Failed. Please check your input.',
+        type: 'error',
+      });
+      console.warn('Form validation failed');
     }
   });
 };
