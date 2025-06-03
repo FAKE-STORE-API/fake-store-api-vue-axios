@@ -10,14 +10,14 @@
     <el-row>
       <el-text :style="{ fontFamily: 'bold', color: 'black' }">Firstname</el-text>
       <el-col :span="24">
-        <el-form-item prop="firstName">
+        <el-form-item prop="firstname">
           <el-input
-            v-model="ruleForm.firstName"
+            v-model="ruleForm.firstname"
             :prefix-icon="User"
             placeholder="Enter your firstname"
             input-style="font-family:regular"
-            @blur="cleanInputOnBlur('firstName')"
-            @input="removeWhitespace('firstName')"
+            @blur="cleanInputOnBlur('firstname')"
+            @input="removeWhitespace('firstname')"
             minlength="2"
             maxlength="20"
           />
@@ -28,14 +28,14 @@
     <el-row>
       <el-text :style="{ fontFamily: 'bold', color: 'black' }">Lastname</el-text>
       <el-col :span="24">
-        <el-form-item prop="lastName">
+        <el-form-item prop="lastname">
           <el-input
-            v-model="ruleForm.lastName"
+            v-model="ruleForm.lastname"
             :prefix-icon="User"
             placeholder="Enter your lastname"
             input-style="font-family:regular"
-            @blur="cleanInputOnBlur('lastName')"
-            @input="removeWhitespace('lastName')"
+            @blur="cleanInputOnBlur('lastname')"
+            @input="removeWhitespace('lastname')"
             minlength="2"
             maxlength="20"
           />
@@ -61,14 +61,14 @@
     <el-row>
       <el-text :style="{ fontFamily: 'bold', color: 'black' }">Mobile Number</el-text>
       <el-col :span="24">
-        <el-form-item prop="contact">
+        <el-form-item prop="contactNumber">
           <el-input
-            v-model="ruleForm.contact"
+            v-model="ruleForm.contactNumber"
             :prefix-icon="Phone"
             placeholder="Enter your mobile number"
             :maxlength="13"
             input-style="font-family:regular"
-            @input="removeWhitespace('contact')"
+            @input="removeWhitespace('contactNumber')"
           />
         </el-form-item>
       </el-col>
@@ -135,7 +135,9 @@ import { ref, reactive } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { RuleForm } from '@/types/RuleForm';
 import { User, Message, Phone, Unlock, Lock } from '@element-plus/icons-vue';
+import { useRegistrationStore } from '@/stores/useStore';
 
+const registrationStore = useRegistrationStore();
 const ruleFormRef = ref<FormInstance | null>(null);
 const ruleForm = reactive<RuleForm>({
   id: '',
@@ -144,12 +146,10 @@ const ruleForm = reactive<RuleForm>({
   email: '',
   contactNumber: '',
   password: '',
-  confirmPasword: '',
+  confirmPassword: '',
 });
 
-type RuleFormStringField = StringFieldsOnly<userRegistrationStore>;
-
-const validatefirstName = (rule: any, value: any, callback: any) => {
+const validateFirstname = (rule: any, value: any, callback: any) => {
   if (value === '') {
     callback(new Error('Please enter your first name'));
   } else if (value.length < 2) {
@@ -159,7 +159,7 @@ const validatefirstName = (rule: any, value: any, callback: any) => {
   }
 };
 
-const validateLastName = (rule: any, value: any, callback: any) => {
+const validateLastname = (rule: any, value: any, callback: any) => {
   if (value === '') {
     callback(new Error('Please enter your last name'));
   } else if (value.length < 2) {
@@ -180,7 +180,7 @@ const validateEmail = (rule: any, value: any, callback: any) => {
   }
 };
 
-const validateContact = (rule: any, value: any, callback: any) => {
+const validateContactNumber = (rule: any, value: any, callback: any) => {
   const contactRegex = /^(09|\+639)\d{9}$/;
   if (value === '') {
     callback(new Error('Please enter your mobile number'));
@@ -212,10 +212,10 @@ const validateConfirmPassword = (rule: any, value: any, callback: any) => {
 };
 
 const signUpRules = reactive<FormRules<typeof ruleForm>>({
-  firstName: [{ required: true, validator: validatefirstName, trigger: 'blur' }],
-  lastName: [{ required: true, validator: validateLastName, trigger: 'blur' }],
+  firstname: [{ required: true, validator: validateFirstname, trigger: 'blur' }],
+  lastname: [{ required: true, validator: validateLastname, trigger: 'blur' }],
   email: [{ required: true, validator: validateEmail, trigger: 'blur' }],
-  contact: [{ required: true, validator: validateContact, trigger: 'blur' }],
+  contactNumber: [{ required: true, validator: validateContactNumber, trigger: 'blur' }],
   password: [{ required: true, validator: validatePassword, trigger: 'blur' }],
   confirmPassword: [{ required: true, validator: validateConfirmPassword, trigger: 'blur' }],
 });
@@ -224,24 +224,33 @@ const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.validate((valid) => {
     if (valid) {
-      // Show form values in console
-      console.log('Form values:', { ...ruleForm });
-      // Optionally, you can keep registrationStore.registerUser if needed
-      // const success = registrationStore.registerUser(ruleForm);
-      // if (success) {
-      //   console.log('Registration successful');
-      // } else {
-      //   console.error('Registration failed');
-      // }
+      // Map ruleForm to userRegistrationStore fields
+      const userData = {
+        id: ruleForm.id,
+        firstName: ruleForm.firstname,
+        lastName: ruleForm.lastname,
+        email: ruleForm.email,
+        contactNumber: ruleForm.contactNumber,
+        password: ruleForm.password,
+        confirmPassword: ruleForm.confirmPassword,
+        role: 'isCustomer',
+      };
+      const success = registrationStore.registerUser(userData);
+      if (success) {
+        console.log('Registration successful');
+        console.log('Registered Users:', registrationStore.getUsers);
+      } else {
+        console.error('Registration failed');
+      }
     }
   });
 };
 
-const removeWhitespace = (field: RuleFormStringFields) => {
+const removeWhitespace = (field: keyof RuleForm) => {
   ruleForm[field] = ruleForm[field].replace(/\s+/g, '');
 };
 
-const cleanInputOnBlur = (field: RuleFormStringFields) => {
+const cleanInputOnBlur = (field: keyof RuleForm) => {
   ruleForm[field] = ruleForm[field].trim();
 };
 </script>
