@@ -22,5 +22,20 @@ export const useProductStore = defineStore('product', () => {
     }
   };
 
-  return { products, selectedProduct, isLoading, loadProducts };
+  const loadProductById = async (id: number) => {
+    try {
+      console.log(`Loading product with ID: ${id}`);
+      isLoading.value = true;
+      const product = await productService.fetchProductById(id);
+
+      selectedProduct.value = product;
+      console.log(`Loaded product from store:`, selectedProduct.value);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  return { products, selectedProduct, isLoading, loadProducts, loadProductById };
 });
