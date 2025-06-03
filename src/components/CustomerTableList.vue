@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-bottom: 16px">
+  <div style="margin-bottom: 16px; display: flex; justify-content: flex-end">
     <el-button type="primary">Add Customer</el-button>
   </div>
   <el-table :data="filterTableData" style="width: 100%">
@@ -11,13 +11,11 @@
     <el-table-column label="Password" prop="password" />
     <el-table-column align="right">
       <template #header>
-        <el-input v-model="search" size="medium" placeholder="Type to search" />
+        <el-input v-model="search" placeholder="Type to search" />
       </template>
       <template #default="scope">
-        <el-button size="small" @click="handleEdit(scope.$index, scope.row)"> Edit </el-button>
-        <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">
-          Delete
-        </el-button>
+        <el-button @click="handleEdit(scope.$index, scope.row)"> Edit </el-button>
+        <el-button type="danger" @click="handleDelete(scope.$index, scope.row)"> Delete </el-button>
       </template>
     </el-table-column>
   </el-table>

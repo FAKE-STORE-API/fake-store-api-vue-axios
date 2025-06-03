@@ -10,7 +10,9 @@
       <el-main class="main">
         <div class="dashboard-content">
           <el-tabs type="border-card">
-            <el-tab-pane label="My Products">User</el-tab-pane>
+            <el-tab-pane label="My Products">
+              <product-table-list />
+            </el-tab-pane>
             <el-tab-pane label="My Customers">
               <customer-table-list />
             </el-tab-pane>
@@ -23,6 +25,7 @@
 
 <script setup lang="ts">
 import CustomerTableList from '@/components/CustomerTableList.vue';
+import ProductTableList from '@/components/ProductTableList.vue';
 </script>
 
 <style scoped>
