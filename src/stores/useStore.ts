@@ -19,15 +19,12 @@ export const useRegistrationStore = defineStore('registration', {
       const { firstName, lastName, email, contactNumber, password, confirmPassword } = userData;
 
       const isExistingUser = this.registeredUsers.some(
-        (user) =>
-          user.email === email ||
-          user.contactNumber === contactNumber ||
-          user.firstName.toLowerCase() === firstName.toLowerCase(),
+        (user) => user.email === email || user.contactNumber === contactNumber,
       );
 
       if (isExistingUser) {
         ElMessage({
-          message: 'User already exists with the same email, contact number, or first name.',
+          message: 'User already exists with the same email and/or contact number.',
           grouping: true,
           type: 'error',
         });
