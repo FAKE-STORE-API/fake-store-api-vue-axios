@@ -1,51 +1,47 @@
 <template>
-  <div class="common-layout">
-    <el-container>
-      <el-header>
-        <HeaderComponent />
-      </el-header>
-      <el-divider />
-      <el-main>
-        <el-input
-          v-model="searchQuery"
-          style="width: 240px; margin-bottom: 20px"
-          placeholder="Search products"
-          :prefix-icon="Search"
-        />
-        <el-row :gutter="20">
-          <template v-if="productStore.isLoading">
-            <el-col v-for="n in 10" :key="n" :xs="24" :sm="24" :md="12" :lg="8" :xl="4">
-              <ProductCardSkeleton />
+  <base-layout>
+    <template #header>
+      <HeaderComponent />
+    </template>
+    <template #content>
+      <el-input
+        v-model="searchQuery"
+        style="width: 240px; margin-bottom: 20px"
+        placeholder="Search products"
+        :prefix-icon="Search"
+      />
+      <el-row :gutter="20">
+        <template v-if="productStore.isLoading">
+          <el-col v-for="n in 10" :key="n" :xs="24" :sm="24" :md="12" :lg="8" :xl="4">
+            <ProductCardSkeleton />
+          </el-col>
+        </template>
+        <template v-else>
+          <template v-if="filteredProducts.length">
+            <el-col
+              v-for="product in filteredProducts"
+              :key="product.id"
+              :xs="24"
+              :sm="24"
+              :md="12"
+              :lg="8"
+              :xl="4"
+            >
+              <ProductCard
+                :product="product"
+                @go-to-product="handleGoToProduct"
+                @add-to-cart="handleAddToCart"
+                @remove-from-cart="handleRemoveFromCart"
+              />
             </el-col>
           </template>
           <template v-else>
-            <template v-if="filteredProducts.length">
-              <el-col
-                v-for="product in filteredProducts"
-                :key="product.id"
-                :xs="24"
-                :sm="24"
-                :md="12"
-                :lg="8"
-                :xl="4"
-              >
-                <ProductCard
-                  :product="product"
-                  @go-to-product="handleGoToProduct"
-                  @add-to-cart="handleAddToCart"
-                  @remove-from-cart="handleRemoveFromCart"
-                />
-              </el-col>
-            </template>
-            <template v-else>
-              <el-empty description="No products found." />
-            </template>
+            <el-empty description="No products found." />
           </template>
-        </el-row>
-      </el-main>
-      <!-- <el-footer>Footer</el-footer> -->
-    </el-container>
-  </div>
+        </template>
+      </el-row>
+    </template>
+  </base-layout>
 </template>
 
 <script setup lang="ts">

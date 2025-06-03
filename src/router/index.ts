@@ -26,6 +26,11 @@ const router = createRouter({
       component: () => import('../views/customer/ProductDetailsView.vue'),
       props: (route) => ({ id: Number(route.params.id) }),
     },
+    {
+      path: '/admin/dashboard',
+      name: 'admin-dashboard',
+      component: () => import('../views/admin/AdminDashboardView.vue'),
+    },
   ],
 });
 
