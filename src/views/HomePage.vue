@@ -133,7 +133,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
-import { RuleForm } from '@/types/RuleForm';
+import type { RuleForm } from '@/models/types';
 import { User, Message, Phone, Unlock, Lock } from '@element-plus/icons-vue';
 import { useRegistrationStore } from '@/stores/useStore';
 
@@ -220,7 +220,7 @@ const signUpRules = reactive<FormRules<typeof ruleForm>>({
   confirmPassword: [{ required: true, validator: validateConfirmPassword, trigger: 'blur' }],
 });
 
-const submitForm = (formEl: FormInstance | undefined) => {
+const submitForm = (formEl: FormInstance | null) => {
   if (!formEl) return;
   formEl.validate((valid) => {
     if (valid) {
@@ -233,7 +233,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
         contactNumber: ruleForm.contactNumber,
         password: ruleForm.password,
         confirmPassword: ruleForm.confirmPassword,
-        role: 'isCustomer',
+        role: 'isCustomer' as const,
       };
       const success = registrationStore.registerUser(userData);
       if (success) {
