@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
-import HomePage from '@/views/HomePage.vue';
+import HomePage from '@/views/customer/HomePage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,12 +18,12 @@ const router = createRouter({
     {
       path: '/customer/products',
       name: 'customer-products',
-      component: () => import('../views/CustomerProductsView.vue'),
+      component: () => import('../views/customer/CustomerProductsView.vue'),
     },
     {
       path: '/product/:id',
       name: 'product-details',
-      component: () => import('../views/ProductDetailsView.vue'),
+      component: () => import('../views/customer/ProductDetailsView.vue'),
       props: (route) => ({ id: Number(route.params.id) }),
     },
   ],
