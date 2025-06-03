@@ -8,6 +8,14 @@
 
     <template #content>
       <el-main class="main">
+        <div style="margin-bottom: 1rem; display: flex; gap: 1rem">
+          <el-card style="max-width: 280px; background-color: #e6a23c; color: white" shadow="hover">
+            <p>Total Products: 100</p>
+          </el-card>
+          <el-card style="max-width: 280px; background-color: #67c23a; color: white" shadow="hover">
+            <p>Total Customers: 84</p>
+          </el-card>
+        </div>
         <div class="dashboard-content">
           <el-tabs type="border-card">
             <el-tab-pane label="My Products">

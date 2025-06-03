@@ -1,6 +1,6 @@
 <template>
   <div style="margin-bottom: 16px; display: flex; justify-content: flex-end">
-    <el-button type="success">Add Product</el-button>
+    <el-button type="primary">Add Product</el-button>
   </div>
   <el-table :data="filterTableData" style="width: 100%">
     <el-table-column label="Created At" prop="date" />
