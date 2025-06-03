@@ -10,7 +10,11 @@ import 'element-plus/dist/index.css';
 import App from './App.vue';
 import router from './router';
 
+import BaseLayout from './components/base/BaseLayout.vue';
+
 const app = createApp(App);
+
+app.component('BaseLayout', BaseLayout);
 
 app.use(ElementPlus);
 app.use(createPinia());
