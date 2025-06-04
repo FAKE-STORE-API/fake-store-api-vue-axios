@@ -61,5 +61,49 @@ export const useRegistrationStore = defineStore('registration', {
 
       return true;
     },
+
+    async updateUser(updatedUser: userRegistrationStore): Promise<boolean> {
+      this.isLoading = true;
+      await new Promise((resolve) => setTimeout(resolve, 600));
+
+      const index = this.registeredUsers.findIndex((u) => u.id === updatedUser.id);
+
+      if (index === -1) {
+        ElMessage({
+          message: 'User not found.',
+          type: 'error',
+        });
+        this.isLoading = false;
+        return false;
+      }
+
+      const isDuplicate = this.registeredUsers.some(
+        (user, i) =>
+          i !== index &&
+          (user.email === updatedUser.email || user.contactNumber === updatedUser.contactNumber),
+      );
+
+      if (isDuplicate) {
+        ElMessage({
+          message: 'Another user already has this email or contact number.',
+          type: 'error',
+        });
+        this.isLoading = false;
+        return false;
+      }
+
+      this.registeredUsers[index] = { ...updatedUser };
+
+      localStorage.setItem('registeredUsers', JSON.stringify(this.registeredUsers));
+
+      ElMessage({
+        message: 'User updated successfully!',
+        type: 'success',
+      });
+
+      this.isLoading = false;
+
+      return true;
+    },
   },
 });

@@ -48,9 +48,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 const props = defineProps<{
   drawerVisible: boolean;
+  editUser?: any | null;
 }>();
 
-const emit = defineEmits(['update:drawerVisible']);
+const emit = defineEmits(['update:drawerVisible', 'updated']);
 
 const drawerVisibleLocal = ref(props.drawerVisible);
 
@@ -74,12 +75,14 @@ const handleResize = () => {
 const registrationStore = useRegistrationStore();
 
 const form = reactive({
+  id: '',
   firstName: '',
   lastName: '',
   email: '',
   contactNumber: '',
   password: '',
   confirmPassword: '',
+  role: 'isCustomer' as 'isCustomer',
 });
 
 const resetForm = () => {
@@ -97,17 +100,48 @@ const handleCancel = () => {
 };
 
 const handleSubmit = async () => {
-  const userData = {
-    id: uuidv4(),
-    ...form,
-    role: 'isCustomer' as const,
-  };
-  const success = await registrationStore.registerUser(userData);
-  if (success) {
-    resetForm();
-    drawerVisibleLocal.value = false;
+  if (form.id) {
+    // Edit mode
+    const success = await registrationStore.updateUser({ ...form });
+    if (success) {
+      emit('updated');
+      resetForm();
+      drawerVisibleLocal.value = false;
+    }
+  } else {
+    // Add mode
+    const userData = {
+      ...form,
+      id: uuidv4(),
+      role: 'isCustomer' as const,
+    };
+    const success = await registrationStore.registerUser(userData);
+    if (success) {
+      emit('updated');
+      resetForm();
+      drawerVisibleLocal.value = false;
+    }
   }
 };
+
+watch(
+  () => props.editUser,
+  (user) => {
+    if (user && typeof user === 'object') {
+      form.id = user.id || '';
+      form.firstName = user.firstName || '';
+      form.lastName = user.lastName || '';
+      form.email = user.email || '';
+      form.contactNumber = user.contactNumber || '';
+      form.password = user.password || '';
+      form.confirmPassword = user.confirmPassword || '';
+      form.role = user.role || 'isCustomer';
+    } else {
+      resetForm();
+    }
+  },
+  { immediate: true },
+);
 
 onMounted(() => {
   window.addEventListener('resize', handleResize);

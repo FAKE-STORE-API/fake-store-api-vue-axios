@@ -23,8 +23,15 @@
               <product-table-list />
             </el-tab-pane>
             <el-tab-pane label="My Customers">
-              <customer-table-list @add-customer="showUserFormDrawer = true" />
-              <add-user-form v-model:drawerVisible="showUserFormDrawer" />
+              <customer-table-list
+                @add-customer="showUserFormDrawer = true"
+                @edit-customer="handleEditCustomer"
+              />
+              <add-user-form
+                v-model:drawerVisible="showUserFormDrawer"
+                :editUser="editUser"
+                @updated="handleUpdated"
+              />
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -49,6 +56,23 @@ const adminStore = useAdminStore();
 const router = useRouter();
 
 const showUserFormDrawer = ref(false);
+
+const editUser = ref(null);
+
+const handleAddCustomer = () => {
+  editUser.value = null;
+  showUserFormDrawer.value = true;
+};
+
+const handleEditCustomer = (user: any) => {
+  editUser.value = { ...user };
+  showUserFormDrawer.value = true;
+};
+
+const handleUpdated = () => {
+  showUserFormDrawer.value = false;
+  editUser.value = null;
+};
 
 const handleLogout = () => {
   adminStore.logout();
