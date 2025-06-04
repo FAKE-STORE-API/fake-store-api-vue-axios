@@ -1,9 +1,8 @@
 <template>
   <div style="margin-bottom: 16px; display: flex; justify-content: flex-end">
-    <el-button type="primary">Add Customer</el-button>
+    <el-button type="primary" @click="emit('add-customer')">Add Customer</el-button>
   </div>
   <el-table :data="filterTableData" style="width: 100%">
-    <el-table-column label="Created At" prop="date" />
     <el-table-column label="First Name" prop="firstName" />
     <el-table-column label="Last Name" prop="lastName" />
     <el-table-column label="Email" prop="email" />
@@ -23,56 +22,30 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useRegistrationStore } from '@/stores/useStore';
 
-interface Customer {
-  date: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  contactNumber: string;
-  password: string;
-}
+const emit = defineEmits(['add-customer']);
+
+const registrationStore = useRegistrationStore();
+const { getUsers } = storeToRefs(registrationStore);
 
 const search = ref('');
+
 const filterTableData = computed(() =>
-  tableData.filter(
+  getUsers.value.filter(
     (data) =>
       !search.value ||
       data.lastName.toLowerCase().includes(search.value.toLowerCase()) ||
-      data.firstName.toLowerCase().includes(search.value.toLowerCase()),
+      data.firstName.toLowerCase().includes(search.value.toLowerCase()) ||
+      data.email.toLowerCase().includes(search.value.toLowerCase()),
   ),
 );
-const handleEdit = (index: number, row: Customer) => {
-  console.log(index, row);
-};
-const handleDelete = (index: number, row: Customer) => {
-  console.log(index, row);
-};
 
-const tableData = [
-  {
-    date: '2024-06-01',
-    firstName: 'Alice',
-    lastName: 'Smith',
-    email: 'alice.smith@example.com',
-    contactNumber: '123-456-7890',
-    password: 'password123',
-  },
-  {
-    date: '2024-06-02',
-    firstName: 'Bob',
-    lastName: 'Johnson',
-    email: 'bob.johnson@example.com',
-    contactNumber: '234-567-8901',
-    password: 'securepass',
-  },
-  {
-    date: '2024-06-03',
-    firstName: 'Carol',
-    lastName: 'Williams',
-    email: 'carol.williams@example.com',
-    contactNumber: '345-678-9012',
-    password: 'mysecret',
-  },
-];
+const handleEdit = (index: number, row: any) => {
+  console.log(index, row);
+};
+const handleDelete = (index: number, row: any) => {
+  console.log(index, row);
+};
 </script>

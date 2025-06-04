@@ -9,13 +9,17 @@ export const useRegistrationStore = defineStore('registration', {
     registeredUsers: JSON.parse(
       localStorage.getItem('registeredUsers') || '[]',
     ) as userRegistrationStore[],
+    isLoading: false,
   }),
 
   getters: {
     getUsers: (state) => state.registeredUsers,
   },
   actions: {
-    registerUser(userData: userRegistrationStore): boolean {
+    async registerUser(userData: userRegistrationStore): Promise<boolean> {
+      this.isLoading = true;
+
+      await new Promise((resolve) => setTimeout(resolve, 600));
       const { firstName, lastName, email, contactNumber, password, confirmPassword } = userData;
 
       const isExistingUser = this.registeredUsers.some(
@@ -28,10 +32,12 @@ export const useRegistrationStore = defineStore('registration', {
           grouping: true,
           type: 'error',
         });
+        this.isLoading = false;
         return false;
       }
 
       const id = uuidv4();
+
       this.registeredUsers.push({
         id,
         firstName,
@@ -42,7 +48,17 @@ export const useRegistrationStore = defineStore('registration', {
         confirmPassword,
         role: 'isCustomer',
       });
+
       localStorage.setItem('registeredUsers', JSON.stringify(this.registeredUsers));
+
+      ElMessage({
+        message: 'User registered successfully!',
+        grouping: true,
+        type: 'success',
+      });
+
+      this.isLoading = false;
+
       return true;
     },
   },

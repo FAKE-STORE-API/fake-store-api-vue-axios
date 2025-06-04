@@ -34,7 +34,7 @@
           >Customer</el-button
         >
         <el-button type="danger" size="large" @click="navigateTo({ name: 'admin-login' })"
-          >Seller</el-button
+          >Admin</el-button
         >
         <p>
           By using this service, you understood and agree to the DigiMart Online Services Terms of
