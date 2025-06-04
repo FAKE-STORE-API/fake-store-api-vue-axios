@@ -33,7 +33,7 @@
         <el-button type="primary" size="large" @click="navigateTo({ name: 'HomePage' })"
           >Customer</el-button
         >
-        <el-button type="danger" size="large" @click="navigateTo({ name: 'admin-dashboard' })"
+        <el-button type="danger" size="large" @click="navigateTo({ name: 'admin-login' })"
           >Seller</el-button
         >
         <p>
