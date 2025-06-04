@@ -23,7 +23,8 @@
               <product-table-list />
             </el-tab-pane>
             <el-tab-pane label="My Customers">
-              <customer-table-list />
+              <customer-table-list @add-customer="showUserFormDrawer = true" />
+              <add-user-form v-model:drawerVisible="showUserFormDrawer" />
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -33,8 +34,11 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+
 import CustomerTableList from '@/components/CustomerTableList.vue';
 import ProductTableList from '@/components/ProductTableList.vue';
+import AddUserForm from '@/components/AddUserForm.vue';
 
 import { useAdminStore } from '@/stores/adminStore';
 
@@ -43,6 +47,8 @@ import { useRouter } from 'vue-router';
 const adminStore = useAdminStore();
 
 const router = useRouter();
+
+const showUserFormDrawer = ref(false);
 
 const handleLogout = () => {
   adminStore.logout();
