@@ -105,5 +105,27 @@ export const useRegistrationStore = defineStore('registration', {
 
       return true;
     },
+
+    async deleteUser(id: string): Promise<boolean> {
+      this.isLoading = true;
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      const index = this.registeredUsers.findIndex((u) => u.id === id);
+      if (index === -1) {
+        ElMessage({
+          message: 'User not found.',
+          type: 'error',
+        });
+        this.isLoading = false;
+        return false;
+      }
+      this.registeredUsers.splice(index, 1);
+      localStorage.setItem('registeredUsers', JSON.stringify(this.registeredUsers));
+      ElMessage({
+        message: 'User deleted successfully!',
+        type: 'success',
+      });
+      this.isLoading = false;
+      return true;
+    },
   },
 });
