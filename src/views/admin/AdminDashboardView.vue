@@ -2,7 +2,8 @@
   <base-layout>
     <template #header>
       <el-header class="header">
-        <h1>Dashboard</h1>
+        <h1>Welcome, Admin!</h1>
+        <el-button type="danger" @click="handleLogout">Logout</el-button>
       </el-header>
     </template>
 
@@ -34,6 +35,19 @@
 <script setup lang="ts">
 import CustomerTableList from '@/components/CustomerTableList.vue';
 import ProductTableList from '@/components/ProductTableList.vue';
+
+import { useAdminStore } from '@/stores/adminStore';
+
+import { useRouter } from 'vue-router';
+
+const adminStore = useAdminStore();
+
+const router = useRouter();
+
+const handleLogout = () => {
+  adminStore.logout();
+  router.push('/');
+};
 </script>
 
 <style scoped>
@@ -45,6 +59,7 @@ import ProductTableList from '@/components/ProductTableList.vue';
 }
 
 :deep(.el-header) {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
