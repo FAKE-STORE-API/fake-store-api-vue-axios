@@ -46,7 +46,8 @@ const handleEdit = (index: number, row: any) => {
   console.log(index, row);
   emit('edit-customer', row);
 };
-const handleDelete = (index: number, row: any) => {
+const handleDelete = async (index: number, row: any) => {
   console.log(index, row);
+  await registrationStore.deleteUser(row.id);
 };
 </script>
