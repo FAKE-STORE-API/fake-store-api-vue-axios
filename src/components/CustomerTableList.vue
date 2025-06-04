@@ -25,7 +25,7 @@ import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRegistrationStore } from '@/stores/useStore';
 
-const emit = defineEmits(['add-customer']);
+const emit = defineEmits(['add-customer', 'edit-customer']);
 
 const registrationStore = useRegistrationStore();
 const { getUsers } = storeToRefs(registrationStore);
@@ -44,6 +44,7 @@ const filterTableData = computed(() =>
 
 const handleEdit = (index: number, row: any) => {
   console.log(index, row);
+  emit('edit-customer', row);
 };
 const handleDelete = (index: number, row: any) => {
   console.log(index, row);
