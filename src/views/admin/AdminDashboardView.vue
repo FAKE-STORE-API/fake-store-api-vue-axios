@@ -20,7 +20,11 @@
         <div class="dashboard-content">
           <el-tabs type="border-card">
             <el-tab-pane label="My Products">
-              <product-table-list />
+              <product-table-list @add-product="showProductFormDrawer = true" />
+              <add-product-form
+                v-model:drawerVisible="showProductFormDrawer"
+                @updated="handleProductUpdated"
+              />
             </el-tab-pane>
             <el-tab-pane label="My Customers">
               <customer-table-list
@@ -46,6 +50,7 @@ import { ref } from 'vue';
 import CustomerTableList from '@/components/CustomerTableList.vue';
 import ProductTableList from '@/components/ProductTableList.vue';
 import AddUserForm from '@/components/AddUserForm.vue';
+import AddProductForm from '@/components/AddProductForm.vue';
 
 import { useAdminStore } from '@/stores/adminStore';
 
@@ -57,12 +62,9 @@ const router = useRouter();
 
 const showUserFormDrawer = ref(false);
 
-const editUser = ref(null);
+const showProductFormDrawer = ref(false);
 
-const handleAddCustomer = () => {
-  editUser.value = null;
-  showUserFormDrawer.value = true;
-};
+const editUser = ref(null);
 
 const handleEditCustomer = (user: any) => {
   editUser.value = { ...user };
@@ -72,6 +74,10 @@ const handleEditCustomer = (user: any) => {
 const handleUpdated = () => {
   showUserFormDrawer.value = false;
   editUser.value = null;
+};
+
+const handleProductUpdated = () => {
+  showProductFormDrawer.value = false;
 };
 
 const handleLogout = () => {

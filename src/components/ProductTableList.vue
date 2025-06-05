@@ -1,10 +1,9 @@
 <template>
   <div style="margin-bottom: 16px; display: flex; justify-content: flex-end">
-    <el-button type="primary">Add Product</el-button>
+    <el-button type="primary" @click="$emit('add-product')">Add Product</el-button>
   </div>
   <el-table :data="filterTableData" style="width: 100%">
-    <el-table-column label="Created At" prop="date" />
-    <el-table-column label="Title" prop="title" />
+    <el-table-column label="Product Name" prop="title" />
     <el-table-column label="Price" prop="price" />
     <el-table-column label="Description" prop="description" />
     <el-table-column label="Image">
@@ -17,7 +16,11 @@
         />
       </template>
     </el-table-column>
-    <el-table-column label="Rating" prop="rating" />
+    <el-table-column label="Rating">
+      <template #default="scope">
+        {{ scope.row.rating?.rate ?? scope.row.rating ?? '-' }}
+      </template>
+    </el-table-column>
     <el-table-column align="right">
       <template #header>
         <el-input v-model="search" placeholder="Type to search" />
@@ -31,48 +34,33 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
-
+import { computed, ref, onMounted } from 'vue';
 import type { Product } from '@/models/product';
 
 const search = ref('');
-const tableData = [
-  {
-    date: '2024-06-01',
-    title: 'Wireless Mouse',
-    price: 25.99,
-    description: 'A comfortable wireless mouse with ergonomic design.',
-    image:
-      'https://www.shutterstock.com/image-vector/set-two-minimalist-white-wireless-260nw-2504723227.jpg',
-    rating: 4.5,
-  },
-  {
-    date: '2024-06-02',
-    title: 'Mechanical Keyboard',
-    price: 79.99,
-    description: 'RGB backlit mechanical keyboard with blue switches.',
-    image:
-      'https://meletrix.com/cdn/shop/products/1_6209d067-e4d5-47cc-bdd1-e02d6ca22b11.jpg?v=1680458276&width=2048',
-    rating: 4.8,
-  },
-  {
-    date: '2024-06-03',
-    title: 'HD Monitor',
-    price: 199.99,
-    description: '24-inch Full HD monitor with ultra-thin bezels.',
-    image: 'https://www.unison.com.ph/wp-content/uploads/2023/02/22MP410-B.png',
-    rating: 4.6,
-  },
-];
 
-const filterTableData = computed(() =>
-  tableData.filter(
-    (data) =>
+// Only load custom products from localStorage
+const LOCAL_STORAGE_KEY = 'customProducts';
+
+function loadCustomProducts(): Product[] {
+  const data = localStorage.getItem(LOCAL_STORAGE_KEY);
+  return data ? JSON.parse(data) : [];
+}
+
+const customProducts = ref<Product[]>([]);
+
+onMounted(() => {
+  customProducts.value = loadCustomProducts();
+});
+
+const filterTableData = computed(() => {
+  return customProducts.value.filter(
+    (data: Product) =>
       !search.value ||
       data.title.toLowerCase().includes(search.value.toLowerCase()) ||
       data.description.toLowerCase().includes(search.value.toLowerCase()),
-  ),
-);
+  );
+});
 
 const handleEdit = (index: number, row: Product) => {
   console.log(index, row);
