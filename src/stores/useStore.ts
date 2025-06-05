@@ -2,6 +2,8 @@ import { defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
 import { ElMessage } from 'element-plus';
 
+import router from '@/router';
+
 import type { userRegistrationStore } from '@/models/types';
 
 export const useRegistrationStore = defineStore('registration', {
@@ -126,6 +128,70 @@ export const useRegistrationStore = defineStore('registration', {
       });
       this.isLoading = false;
       return true;
+    },
+  },
+});
+
+export const useAuthenticationStore = defineStore('authentication', {
+  state: () => ({
+    isLoggedIn: false,
+    user: null as {
+      id: string;
+      email: string;
+      lastName: string;
+      contactNumber: string;
+      role: string;
+    } | null,
+  }),
+  getters: {
+    isAtuhenticated: (state) => state.isLoggedIn,
+    getUserEmail: (state) => state.user?.email || '',
+  },
+  actions: {
+    login(email: string, password: string) {
+      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const user = registeredUsers.find(
+        (u: { email: string; password: string }) => u.email === email && u.password === password,
+      );
+      if (user) {
+        this.isLoggedIn = true;
+        this.user = {
+          id: user.id,
+          email: user.email,
+          lastName: user.lastName,
+          role: user.role,
+          contactNumber: user.contactNumber,
+        };
+        localStorage.setItem(
+          'loginStatus',
+          JSON.stringify({ id: user.id, email: user.email, loggedIn: true }),
+        );
+
+        return { success: true, message: 'Login successful' };
+      } else {
+        return { success: false, message: 'Invalid email or password' };
+      }
+    },
+    logout() {
+      this.isLoggedIn = false;
+      this.user = null;
+      localStorage.removeItem('loginStatus');
+      router.push('/');
+      ElMessage({
+        message: 'Logged out successfully!',
+        grouping: true,
+        type: 'success',
+      });
+    },
+    checkLoginStatus() {
+      const loginStatus = localStorage.getItem('loginStatus');
+      if (loginStatus) {
+        const { id, email, loggedIn } = JSON.parse(loginStatus);
+        if (loggedIn) {
+          this.isLoggedIn = true;
+          this.user = { id, email, lastName: '', contactNumber: '', role: 'isCustomer' };
+        }
+      }
     },
   },
 });

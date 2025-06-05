@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed, watch } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 
 import { Search } from '@element-plus/icons-vue';
 
