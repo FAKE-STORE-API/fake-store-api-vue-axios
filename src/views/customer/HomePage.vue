@@ -62,7 +62,7 @@ const loginForm = reactive({
 
 const submitForm = (formEl: FormInstance | null) => {
   if (!formEl) return;
-  formEl.validate((valid) => {
+  formEl.validate(async (valid) => {
     if (valid) {
       const userData = {
         id: ruleForm.id,
@@ -74,7 +74,7 @@ const submitForm = (formEl: FormInstance | null) => {
         confirmPassword: ruleForm.confirmPassword,
         role: 'isCustomer' as const,
       };
-      const success = registrationStore.registerUser(userData);
+      const success = await registrationStore.registerUser(userData);
       if (success) {
         ElMessage({
           message: 'Registration successful',
