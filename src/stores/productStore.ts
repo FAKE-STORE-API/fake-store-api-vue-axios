@@ -24,6 +24,14 @@ export const useProductStore = defineStore('product', () => {
 
   const addProduct = (newProduct: Product) => {
     const customProducts = loadCustomProducts();
+
+    if (!newProduct.rating) {
+      newProduct.rating = {
+        rate: +(Math.random() * 5).toFixed(1),
+        count: Math.floor(Math.random() * 100) + 1,
+      };
+    }
+
     customProducts.push(newProduct);
     saveCustomProducts(customProducts);
 
@@ -58,5 +66,30 @@ export const useProductStore = defineStore('product', () => {
     }
   };
 
-  return { products, selectedProduct, isLoading, loadProducts, loadProductById, addProduct };
+  const updateProduct = (updatedProduct: Product) => {
+    const customProducts = loadCustomProducts();
+    const index = customProducts.findIndex((p: Product) => p.id === updatedProduct.id);
+
+    if (index !== -1) {
+      customProducts[index] = { ...updatedProduct };
+      saveCustomProducts(customProducts);
+
+      const storeIndex = products.value.findIndex((p) => p.id === updatedProduct.id);
+      if (storeIndex !== -1) {
+        products.value[storeIndex] = { ...updatedProduct };
+      }
+      return true;
+    }
+    return false;
+  };
+
+  return {
+    products,
+    selectedProduct,
+    isLoading,
+    loadProducts,
+    loadProductById,
+    addProduct,
+    updateProduct,
+  };
 });
