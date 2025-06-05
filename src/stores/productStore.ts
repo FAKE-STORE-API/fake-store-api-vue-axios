@@ -83,6 +83,18 @@ export const useProductStore = defineStore('product', () => {
     return false;
   };
 
+  const deleteProduct = (id: number) => {
+    const customProducts = loadCustomProducts().filter((p: Product) => p.id !== id);
+    saveCustomProducts(customProducts);
+
+    const index = products.value.findIndex((p) => p.id === id);
+    if (index !== -1) {
+      products.value.splice(index, 1);
+      return true;
+    }
+    return false;
+  };
+
   return {
     products,
     selectedProduct,
@@ -91,5 +103,6 @@ export const useProductStore = defineStore('product', () => {
     loadProductById,
     addProduct,
     updateProduct,
+    deleteProduct,
   };
 });
