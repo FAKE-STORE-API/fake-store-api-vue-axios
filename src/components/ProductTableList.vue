@@ -58,6 +58,8 @@ const handleEdit = (index: number, row: Product) => {
   emit('edit-product', row);
 };
 const handleDelete = (index: number, row: Product) => {
-  // Your delete logic here
+  if (confirm(`Are you sure you want to delete "${row.title}"?`)) {
+    productStore.deleteProduct(row.id);
+  }
 };
 </script>
