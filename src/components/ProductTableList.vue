@@ -34,38 +34,30 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref } from 'vue';
+import { useProductStore } from '@/stores/productStore';
 import type { Product } from '@/models/product';
 
+const emit = defineEmits(['edit-product', 'add-product']);
 const search = ref('');
 
-// Only load custom products from localStorage
-const LOCAL_STORAGE_KEY = 'customProducts';
-
-function loadCustomProducts(): Product[] {
-  const data = localStorage.getItem(LOCAL_STORAGE_KEY);
-  return data ? JSON.parse(data) : [];
-}
-
-const customProducts = ref<Product[]>([]);
-
-onMounted(() => {
-  customProducts.value = loadCustomProducts();
-});
+const productStore = useProductStore();
 
 const filterTableData = computed(() => {
-  return customProducts.value.filter(
-    (data: Product) =>
-      !search.value ||
-      data.title.toLowerCase().includes(search.value.toLowerCase()) ||
-      data.description.toLowerCase().includes(search.value.toLowerCase()),
-  );
+  return productStore.products
+    .filter((data: Product) => data.id > 100)
+    .filter(
+      (data: Product) =>
+        !search.value ||
+        data.title.toLowerCase().includes(search.value.toLowerCase()) ||
+        data.description.toLowerCase().includes(search.value.toLowerCase()),
+    );
 });
 
 const handleEdit = (index: number, row: Product) => {
-  console.log(index, row);
+  emit('edit-product', row);
 };
 const handleDelete = (index: number, row: Product) => {
-  console.log(index, row);
+  // Your delete logic here
 };
 </script>

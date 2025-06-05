@@ -35,11 +35,77 @@
 import { ref, reactive, watch, onMounted, onUnmounted } from 'vue';
 import { useProductStore } from '@/stores/productStore';
 
+import type { Product } from '@/models/product';
+
 const props = defineProps<{
   drawerVisible: boolean;
+  editProduct?: Product | null;
 }>();
 
 const emit = defineEmits(['update:drawerVisible', 'updated']);
+
+const productStore = useProductStore();
+
+const form = reactive<Product>({
+  id: 0,
+  title: '',
+  price: 0,
+  description: '',
+  category: '',
+  image: '',
+});
+
+const resetForm = () => {
+  form.id = 0;
+  form.title = '';
+  form.price = 0;
+  form.description = '';
+  form.category = '';
+  form.image = '';
+};
+
+const handleCancel = () => {
+  resetForm();
+  drawerVisibleLocal.value = false;
+};
+
+const handleSubmit = async () => {
+  if (form.id) {
+    // Edit mode
+    const success = productStore.updateProduct({ ...form });
+    if (success) {
+      emit('updated');
+      resetForm();
+      emit('update:drawerVisible', false);
+    }
+  } else {
+    // Add mode
+    const newProduct = {
+      ...form,
+      id: Date.now(),
+      rating: {
+        rate: +(Math.random() * 5).toFixed(1),
+        count: Math.floor(Math.random() * 100) + 1,
+      },
+    };
+    productStore.addProduct(newProduct);
+    emit('updated');
+    resetForm();
+    emit('update:drawerVisible', false);
+  }
+};
+
+watch(
+  () => props.editProduct,
+  (product) => {
+    if (product) {
+      Object.assign(form, product);
+    } else {
+      resetForm();
+    }
+  },
+  { immediate: true },
+);
 
 const drawerVisibleLocal = ref(props.drawerVisible);
 
@@ -58,49 +124,6 @@ const isMobile = ref(window.innerWidth < 768);
 
 const handleResize = () => {
   isMobile.value = window.innerWidth < 1200;
-};
-
-const productStore = useProductStore();
-
-const form = reactive({
-  title: '',
-  price: 0,
-  description: '',
-  category: '',
-  image: '',
-});
-
-const resetForm = () => {
-  form.title = '';
-  form.price = 0;
-  form.description = '';
-  form.category = '';
-  form.image = '';
-};
-
-const handleCancel = () => {
-  resetForm();
-  drawerVisibleLocal.value = false;
-};
-
-const handleSubmit = async () => {
-  // Generate a unique id for the new product (could use Date.now() or a uuid)
-  const newProduct = {
-    id: Date.now(),
-    title: form.title,
-    price: form.price,
-    description: form.description,
-    category: form.category,
-    image: form.image,
-    rating: {
-      rate: 0,
-      count: 0,
-    },
-  };
-  productStore.addProduct(newProduct);
-  emit('updated');
-  resetForm();
-  drawerVisibleLocal.value = false;
 };
 
 onMounted(() => {

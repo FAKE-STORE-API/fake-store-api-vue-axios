@@ -20,9 +20,13 @@
         <div class="dashboard-content">
           <el-tabs type="border-card">
             <el-tab-pane label="My Products">
-              <product-table-list @add-product="showProductFormDrawer = true" />
+              <product-table-list
+                @add-product="showProductFormDrawer = true"
+                @edit-product="handleEditProduct"
+              />
               <add-product-form
                 v-model:drawerVisible="showProductFormDrawer"
+                :editProduct="editProduct"
                 @updated="handleProductUpdated"
               />
             </el-tab-pane>
@@ -45,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
 import CustomerTableList from '@/components/CustomerTableList.vue';
 import ProductTableList from '@/components/ProductTableList.vue';
@@ -54,8 +58,13 @@ import AddProductForm from '@/components/AddProductForm.vue';
 
 import { useAdminStore } from '@/stores/adminStore';
 
+import { useProductStore } from '@/stores/productStore';
+
 import { useRouter } from 'vue-router';
 
+import type { Product } from '@/models/product';
+
+const productStore = useProductStore();
 const adminStore = useAdminStore();
 
 const router = useRouter();
@@ -63,6 +72,7 @@ const router = useRouter();
 const showUserFormDrawer = ref(false);
 
 const showProductFormDrawer = ref(false);
+const editProduct = ref<Product | null>(null);
 
 const editUser = ref(null);
 
@@ -76,6 +86,11 @@ const handleUpdated = () => {
   editUser.value = null;
 };
 
+const handleEditProduct = (product: Product) => {
+  editProduct.value = { ...product };
+  showProductFormDrawer.value = true;
+};
+
 const handleProductUpdated = () => {
   showProductFormDrawer.value = false;
 };
@@ -84,6 +99,10 @@ const handleLogout = () => {
   adminStore.logout();
   router.push('/');
 };
+
+onMounted(() => {
+  productStore.loadProducts();
+});
 </script>
 
 <style scoped>
