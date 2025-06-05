@@ -11,10 +11,31 @@ export const useProductStore = defineStore('product', () => {
   const selectedProduct = ref<Product | null>(null);
   const isLoading = ref(false);
 
+  const LOCAL_STORAGE_KEY = 'customProducts';
+
+  function loadCustomProducts(): Product[] {
+    const data = localStorage.getItem(LOCAL_STORAGE_KEY);
+    return data ? JSON.parse(data) : [];
+  }
+
+  function saveCustomProducts(customProducts: Product[]) {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(customProducts));
+  }
+
+  const addProduct = (newProduct: Product) => {
+    const customProducts = loadCustomProducts();
+    customProducts.push(newProduct);
+    saveCustomProducts(customProducts);
+
+    products.value.push(newProduct);
+  };
+
   const loadProducts = async () => {
     try {
       isLoading.value = true;
-      products.value = await productService.fetchAllProducts();
+      const apiProducts = await productService.fetchAllProducts();
+      const customProducts = loadCustomProducts();
+      products.value = [...apiProducts, ...customProducts];
     } catch (err) {
       console.error(err);
     } finally {
@@ -37,5 +58,5 @@ export const useProductStore = defineStore('product', () => {
     }
   };
 
-  return { products, selectedProduct, isLoading, loadProducts, loadProductById };
+  return { products, selectedProduct, isLoading, loadProducts, loadProductById, addProduct };
 });
